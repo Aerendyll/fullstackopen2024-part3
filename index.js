@@ -1,4 +1,5 @@
 const express = require("express");
+const morgan = require("morgan");
 const app = express();
 app.use(express.json());
 
@@ -24,6 +25,18 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
+
+/*const requestLogger = (request, response, next) => {
+  console.log('Method:', request.method)
+  console.log('Path:  ', request.path)
+  console.log('Body:  ', request.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
+
+*/
 
 app.get("/", (request, response) => {
   response.send("<h1>FullStackOpen part-3 </h1>");
@@ -63,25 +76,45 @@ const generateId = () => {
 
 app.post("/api/persons", (request, response) => {
   const body = request.body;
-  
-  if(!body.name || !body.number){
-     return response.status(400).json({error: 'Name already exists or Name/Number missing'})
+
+  if (!body.name || !body.number) {
+    return response
+      .status(400)
+      .json({ error: "Name already exists or Name/Number missing" });
   }
 
- const existingPerson = persons.find(person => person.name === body.name)
- if(existingPerson){
-  return response.status(400).json({error: 'Name must be unique'})
- }
+  const existingPerson = persons.find((person) => person.name === body.name);
+  if (existingPerson) {
+    return response.status(400).json({ error: "Name must be unique" });
+  }
   const person = {
-    name: body.name ,
-    number: body.number ,
-    id: generateId() 
-  }
-  
-  persons = persons.concat(person)
+    name: body.name,
+    number: body.number,
+    id: generateId(),
+  };
 
-  response.json(person)
+  persons = persons.concat(person);
+
+  response.json(person);
 });
+
+morgan.token("postData", (request, response) => {
+  if (request.method === "POST") {
+    return JSON.stringify(request.body);
+  }
+});
+
+app.use(
+  morgan(
+    ":method :url :status :res[content-length] - :response-time ms :postData"
+  )
+);
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: " Unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
 
 const PORT = 3001;
 app.listen(PORT);
