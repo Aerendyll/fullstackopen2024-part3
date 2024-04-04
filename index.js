@@ -3,7 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const http = require("http");
 const app = express();
-app.use(express.static('dist'))
+app.use(express.static("dist"));
 app.use(cors());
 app.use(express.json());
 
@@ -57,7 +57,7 @@ app.get("/api/persons/:id", (request, response) => {
 
 app.delete("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  const person = persons.filter((person) => person.id !== id);
+  persons = persons.filter((person) => person.id !== id);
 
   response.status(204).end();
 });
@@ -109,7 +109,7 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint);
 
 const PORT = process.env.PORT || 3001;
-const server = http.createServer(app)
+const server = http.createServer(app);
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`);
 });
