@@ -1,8 +1,9 @@
 const express = require("express");
 const morgan = require("morgan");
-const cors = require('cors')
+const cors = require("cors");
+const http = require("http");
 const app = express();
-app.use(cors())
+app.use(cors());
 app.use(express.json());
 
 let persons = [
@@ -107,7 +108,8 @@ const unknownEndpoint = (request, response) => {
 app.use(unknownEndpoint);
 
 const PORT = process.env.PORT || 3001;
+
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-})
+  console.log(`Example app listening on port ${PORT}`);
+});
 //trying to solve error flyio/render
