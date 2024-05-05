@@ -30,6 +30,20 @@ app.get("/api/persons/:id", (request, response, next) =>{
   .catch(error => next(error))
 })
 
+app.delete("/api/persons/:id", (request, response, next) => {
+  const id = request.params.id;
+  Person.findByIdAndDelete(id)
+    .then((result) => {
+      if (result) {
+        response.status(204).end(); // No content, indicando que la operación de borrado fue exitosa
+      } else {
+        response.status(404).json({ error: "Person not found" }); // Si no se encontró la persona con el ID especificado
+      }
+    })
+    .catch((error) => next(error)); // Pasar errores a middleware de manejo de errores
+});
+
+
 app.post("/api/persons", (request,response)=>{
   const body = request.body
 
@@ -46,6 +60,8 @@ app.post("/api/persons", (request,response)=>{
     response.json(savedPerson)
   })
 })
+
+
 
 // Middleware para manejar puntos finales desconocidos
 const unknownEndpoint = (request, response) => {
